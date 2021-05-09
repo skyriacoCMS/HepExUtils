@@ -194,8 +194,9 @@ try:
     
     with inputfclass  as f:
       for i, event in enumerate(f):
-        if i > 10000 : 
-          break
+
+        #if i > 10000 : 
+        #  break
         #print "Processed", i, "events"
         #if( i % 1000 == 0): 
         #  print i
