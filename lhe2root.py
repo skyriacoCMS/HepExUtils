@@ -12,6 +12,8 @@ if __name__ == "__main__":
   g.add_argument("--vbf", action="store_true")
   g.add_argument("--vbf_withdecay", action="store_true")
   g.add_argument("--zh", action="store_true")
+  g.add_argument("--wh_withdecay", action="store_true")
+  g.add_argument("--zh_withdecay", action="store_true")
   g.add_argument("--wh", action="store_true")
   g.add_argument("--ggH4l", action="store_true") # for ggH 4l JHUGen and prophecy
   g.add_argument("--ggH4lMG", action="store_true") # for ggH4l Madgraph with weights
@@ -142,7 +144,7 @@ try:
   if args.ggH4lMG:
     branchnames_float_array=("weights",)
     num_weights=30
-  if args.vbf:
+  if args.vbf or args.vbf_withdecay:
     branchnames_float += ("q2V1", "q2V2")
   branchnames_float += (
     "pg1", "pg4", "pg4pd", "pg1g4", "D0minus", "DCP", "DCP_old",
@@ -189,16 +191,18 @@ try:
     inputfclass = LHEFile_Hwithdecay(inputfile,isgen=args.use_flavor)
     if args.ggH4l : 
       inputfclass = LHEFile_HwithdecayOnly(inputfile,isgen=args.use_flavor)
-    if args.vbf   :
+    if args.vbf or args.zh or args.wh   :
       inputfclass = LHEFile_StableHiggs(inputfile,isgen=args.use_flavor)
     
+      
     with inputfclass  as f:
       for i, event in enumerate(f):
 
-        #if i > 10000 : 
+        #debugging purposes
+        #if i > 1000 : 
         #  break
         #print "Processed", i, "events"
-        #if( i % 1000 == 0): 
+        #if( i % 100 == 0): 
         #  print i
         
         
@@ -222,7 +226,7 @@ try:
         if args.ggH4l :
           process = TVar.ZZGG
         
-        
+        #event.setProcess(TVar.SelfDefine_spin0,TVar.JHUGen,process)
         flav4l = 1; 
         for d in event.daughters: 
          # print d.first
@@ -297,6 +301,9 @@ try:
 
         if args.zh or args.wh:
           branches["mV"][0], branches["mVstar"][0], branches["costheta1"][0], branches["costheta2"][0], branches["Phi"][0], branches["costhetastar"][0], branches["Phi1"][0]= event.computeVHAngles(process)
+        elif args.zh_withdecay or args.wh_withdecay :
+          branches["mV"][0], branches["mVstar"][0], branches["costheta1"][0], branches["costheta2"][0], branches["Phi"][0], branches["costhetastar"][0], branches["Phi1"][0]= event.computeVHAngles(process)
+          branches["M4L"][0], branches["MZ1"][0], branches["MZ2"][0], branches["costheta1d"][0],branches["costheta2d"][0], branches["Phid"][0], branches["costhetastard"][0], branches["Phi1d"][0]= event.computeDecayAngles()
           #branches["mV"][0] = sum((particle.second for particle in event.associated), ROOT.TLorentzVector()).M()
           #branches["mVstar"][0] = sum((particle.second for particle in itertools.chain(event.daughters, event.associated)), ROOT.TLorentzVector()).M()
         elif args.vbf:
@@ -306,7 +313,6 @@ try:
         elif args.vbf_withdecay:
           branches["q2V1"][0], branches["q2V2"][0], branches["costheta1"][0], branches["costheta2"][0], branches["Phi"][0], branches["costhetastar"][0], branches["Phi1"][0]= event.computeVBFAngles()
           branches["HJJpz"][0] = sum((particle.second for particle in itertools.chain(event.daughters, event.associated)), ROOT.TLorentzVector()).Pz()
-
           branches["M4L"][0], branches["MZ1"][0], branches["MZ2"][0], branches["costheta1d"][0],branches["costheta2d"][0], branches["Phid"][0], branches["costhetastard"][0], branches["Phi1d"][0]= event.computeDecayAngles()
 
 	
@@ -331,7 +337,7 @@ try:
           branches["EH"][0] = pH.E()
           branches["rapH"][0] = pH.Rapidity()
                 
-        if not args.vbf : 
+        if not args.vbf and not args.zh and not args.wh : 
           pdau1 = event.daughters[0].second
           branches["ptdau1"][0] = pdau1.Pt()
           branches["pxdau1"][0] = pdau1.Px()
@@ -369,6 +375,7 @@ try:
         
 
         if args.ggH4l:
+          #add FSR photon to the root file 
           if( len(event.associated) > 0):
             ph1 = event.associated[0].second
             branches["pxph1"][0] = ph1.Px()
