@@ -12,12 +12,15 @@ if __name__ == "__main__":
   g.add_argument("--vbf", action="store_true")
   g.add_argument("--vbf_withdecay", action="store_true")
   g.add_argument("--zh", action="store_true")
+  g.add_argument("--zh_lep", action="store_true")
+  g.add_argument("--wh_lep", action="store_true")
   g.add_argument("--wh_withdecay", action="store_true")
   g.add_argument("--zh_withdecay", action="store_true")
   g.add_argument("--wh", action="store_true")
-  g.add_argument("--ggH4l", action="store_true") # for ggH 4l JHUGen and prophecy
+  g.add_argument("--ggH4l", action="store_true") # for ggH 4l JHUGen and prophecy  
   g.add_argument("--ggH4lMG", action="store_true") # for ggH4l Madgraph with weights
   parser.add_argument("--use-flavor", action="store_true")
+  parser.add_argument("--merge_photon", action="store_true") # for ggH 4l JHUGen and prophecy
   parser.add_argument("--CJLST", action="store_true")
   parser.add_argument("--reweight-to", choices="fa3-0.5")
   args = parser.parse_args()
@@ -139,7 +142,7 @@ try:
   t = ROOT.TTree("tree", "tree")
 
   branchnames_float = "costheta1", "costheta2", "Phi1", "costhetastar", "Phi", "HJJpz","M4L","MZ1","MZ2","costheta1d","costheta2d","Phid","costhetastard","Phi1d"
-  if args.zh or args.wh:
+  if args.zh or args.wh or args.zh_lep or args.wh_lep:
     branchnames_float += ("mV", "mVstar")
   if args.ggH4lMG:
     branchnames_float_array=("weights",)
@@ -191,7 +194,7 @@ try:
     inputfclass = LHEFile_Hwithdecay(inputfile,isgen=args.use_flavor)
     if args.ggH4l : 
       inputfclass = LHEFile_HwithdecayOnly(inputfile,isgen=args.use_flavor)
-    if args.vbf or args.zh or args.wh   :
+    if args.vbf or args.zh or args.wh or args.zh_lep or args.wh_lep  :
       inputfclass = LHEFile_StableHiggs(inputfile,isgen=args.use_flavor)
     
       
@@ -201,9 +204,9 @@ try:
         #debugging purposes
         #if i > 1000 : 
         #  break
-        #print "Processed", i, "events"
+        
         #if( i % 100 == 0): 
-        #  print i
+        #  print ("Processed", i, " events\r",)
         
         
 	### Automatically detect Had or Lep associated for VH production###
@@ -222,16 +225,51 @@ try:
             process = TVar.Lep_WH
         elif args.vbf or args.vbf_withdecay:
           process = TVar.JJVBF
-
+        if args.zh_lep :
+          process = TVar.Lep_ZH
+        if args.wh_lep :
+          process = TVar.Lep_WH
         if args.ggH4l :
           process = TVar.ZZGG
         
-        #event.setProcess(TVar.SelfDefine_spin0,TVar.JHUGen,process)
-        flav4l = 1; 
+        
+        flav4l = 1;
         for d in event.daughters: 
-         # print d.first
           flav4l = flav4l*d.first
+          #print "init :",d.first,d.second.Px(),d.second.Py(),d.second.Pz(),d.second.E()
+        # this section merges the EW emitted photon to the closest lepton and updates the daugthers collection
+        # before the calculation of angles and probabilities for decay by MELA. The photon is still stored in
+        # in the associated collection for references 
+        if args.merge_photon and args.ggH4l  :   
 
+          for p in event.associated:
+
+            if not (  p.first == 22)  :
+              continue
+            k = p.second
+            mindr = 9999
+            newlep = ROOT.TLorentzVector()
+
+            photonvector = ROOT.TLorentzVector()
+            lepp = ROOT.TLorentzVector()
+            photonvector.SetPtEtaPhiM(k.Pt(), k.Eta(),k.Phi(), k.M())
+            #print "photon:",p.first,p.second.Px(),p.second.Py(),p.second.Pz(),p.second.E()
+            i_newlep = 0        
+            for ilep, d in enumerate(event.daughters): 
+              lep = d.second
+              d_lor = ROOT.TLorentzVector()            
+              d_lor.SetPtEtaPhiM(lep.Pt(), lep.Eta(),lep.Phi(), lep.M())
+              dr =  k.DeltaR(d_lor)
+              if dr < mindr :
+                lepp.SetPtEtaPhiM(lep.Pt(), lep.Eta(),lep.Phi(), lep.M())
+                mindr = dr
+                i_newlep = ilep  
+
+            newlep = lepp  + photonvector 
+            #print "merged photon with lepton ",i_newlep
+            event.daughters[i_newlep].second = newlep
+            
+       
         '''  
         for ind,d in enumerate(event.associated,1): 
           #print d.first," ",d 
@@ -299,7 +337,7 @@ try:
         #branches["DCP"][0] = branches["pg1g4"][0] / (2 * (branches["pg1"][0] * branches["pg4"][0]) ** 0.5)
         #branches["DCP_old"][0] = branches["pg1g4"][0] / (branches["pg1"][0] + branches["pg4"][0])
 
-        if args.zh or args.wh:
+        if args.zh or args.wh or args.zh_lep or args.wh_lep:
           branches["mV"][0], branches["mVstar"][0], branches["costheta1"][0], branches["costheta2"][0], branches["Phi"][0], branches["costhetastar"][0], branches["Phi1"][0]= event.computeVHAngles(process)
         elif args.zh_withdecay or args.wh_withdecay :
           branches["mV"][0], branches["mVstar"][0], branches["costheta1"][0], branches["costheta2"][0], branches["Phi"][0], branches["costhetastar"][0], branches["Phi1"][0]= event.computeVHAngles(process)
@@ -337,7 +375,7 @@ try:
           branches["EH"][0] = pH.E()
           branches["rapH"][0] = pH.Rapidity()
                 
-        if not args.vbf and not args.zh and not args.wh : 
+        if not args.vbf and not args.zh and not args.wh and not args.zh_lep and not args.wh_lep : 
           pdau1 = event.daughters[0].second
           branches["ptdau1"][0] = pdau1.Pt()
           branches["pxdau1"][0] = pdau1.Px()
