@@ -350,7 +350,7 @@ try:
 	
 	elif args.ggH4l or args.ggH4lMG:
 	  branches["M4L"][0], branches["MZ1"][0], branches["MZ2"][0], branches["costheta1d"][0],branches["costheta2d"][0], branches["Phid"][0], branches["costhetastard"][0], branches["Phi1d"][0]= event.computeDecayAngles()
-        print i,branches["M4L"][0], branches["MZ1"][0], branches["MZ2"][0],len(event.associated)
+        #print i,branches["M4L"][0], branches["MZ1"][0], branches["MZ2"][0],len(event.associated)
         pH = sum((particle.second for particle in event.daughters), ROOT.TLorentzVector())
         if args.ggH4l:
           if( len(event.associated) > 0):
