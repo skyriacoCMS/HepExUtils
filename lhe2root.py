@@ -482,9 +482,9 @@ try:
           phij1  = pj1.Phi()
           phij2  = pj2.Phi()
           if pj1.Pt() > pj2.Pt() :
-            branched["DPhijj"][0] = phij1 - phij2
+            branches["Dphijj"][0] = phij1 - phij2
           else:
-            branched["DPhijj"][0] = phij2 - phij1
+            branches["Dphijj"][0] = phij2 - phij1
         elif args.vbf_withdecay:
           branches["q2V1"][0], branches["q2V2"][0], branches["costheta1"][0], branches["costheta2"][0], branches["Phi"][0], branches["costhetastar"][0], branches["Phi1"][0]= event.computeVBFAngles()
           branches["HJJpz"][0] = sum((particle.second for particle in itertools.chain(event.daughters, event.associated)), ROOT.TLorentzVector()).Pz()
