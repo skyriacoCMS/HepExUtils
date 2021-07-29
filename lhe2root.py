@@ -150,7 +150,9 @@ try:
   if args.calc_prodprob or args.calc_decayprob :
     branchnames_float += ("pg1", "pg4","pg2","pg1g2","pg1g4","pg2za","pg4za","pg1g2za","pg1g4za","D0minus","D0hplus", "DCP", "Dint","D0minus_za","D0hplus_za","Dint_za","DCP_za")
   if args.zh or args.wh or args.zh_lep or args.wh_lep or args.zh_lep_hawk:
-    branchnames_float += ("mV", "mVstar")
+    branchnames_float += ("mV", "mVstar",    "pxj1", "pyj1", "pzj1", "Ej1",
+    "pxj2", "pyj2", "pzj2", "Ej2")
+    
   if args.ggH4lMG:
     branchnames_float_array=("weights",)
     num_weights=30
@@ -211,11 +213,11 @@ try:
       for i, event in enumerate(f):
 
         #debugging purposes
-        #if i > 10000 : 
+        #if i > 100000 : 
         #  break
         
-        if( i % 100 == 0): 
-          print ("Processed", i, " events\r",)
+        #if( i % 100 == 0): 
+        #  print ("Processed", i, " events",end="\r")
         
         
 	### Automatically detect Had or Lep associated for VH production###
@@ -479,12 +481,10 @@ try:
 
           pj1 = event.associated[0].second
           pj2 = event.associated[1].second
-          phij1  = pj1.Phi()
-          phij2  = pj2.Phi()
           if pj1.Pt() > pj2.Pt() :
-            branches["Dphijj"][0] = phij1 - phij2
+            branches["Dphijj"][0] = pj1.DeltaPhi(pj2)
           else:
-            branches["Dphijj"][0] = phij2 - phij1
+            branches["Dphijj"][0] = pj2.DeltaPhi(pj1)
         elif args.vbf_withdecay:
           branches["q2V1"][0], branches["q2V2"][0], branches["costheta1"][0], branches["costheta2"][0], branches["Phi"][0], branches["costhetastar"][0], branches["Phi1"][0]= event.computeVBFAngles()
           branches["HJJpz"][0] = sum((particle.second for particle in itertools.chain(event.daughters, event.associated)), ROOT.TLorentzVector()).Pz()
@@ -558,7 +558,7 @@ try:
             branches["pzph1"][0] = ph1.Pz()
             branches["Eph1"][0] = ph1.E()
 
-        if args.vbf or args.zh or args.wh :     
+        if args.vbf or args.zh or args.wh  or args.zh_lep_hawk:     
           pj1 = event.associated[0].second
           branches["pxj1"][0] = pj1.Px()
           branches["pyj1"][0] = pj1.Py()
