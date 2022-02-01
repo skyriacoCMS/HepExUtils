@@ -3,16 +3,18 @@
 
 import os
 import glob
-import ROOT
+import ROOT as ROOT
+import ROOT 
 from math import sqrt
 import time
 
 #from pathlib import Path
 import re
-from tqdm import trange, tqdm
+#from tqdm import trange, tqdm
 import numpy as np
 import copy
 from array import *
+from GetSyst import getsyst
 #get_ipython().run_line_magic('jsroot', 'on')
 
 
@@ -100,7 +102,7 @@ for t in treelist:
 
 yeardict = {}
 
-for numfile in trange(len(treelist)):
+for numfile in range(0,len(treelist)):
     filename = treelist[numfile]
     ind = filename.split("/").index("200205_CutBased")
 
@@ -191,7 +193,16 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
     hf_systdn = ROOT.TH1F("hf_kew_systdn","",100,0,2000)
     hf_systup = ROOT.TH1F("hf_kew_systup","",100,0,2000)
     hf_nom    = ROOT.TH1F("hf_nom","",100,0,2000)
-    
+
+    hf_syst = []                        
+    for i,systname  in enumerate (shape_syst_list): 
+        hf_syst_up = ROOT.TH3F("hf_syst_up","", len(medges)-1, medges, len(d1edges)-1, d1edges, len(d2edges)-1, d2edges)
+        hf_syst_dn = ROOT.TH3F("hf_syst_dn","", len(medges)-1, medges, len(d1edges)-1, d1edges, len(d2edges)-1, d2edges)
+        hf_syst_up.SetDirectory(0)
+        hf_syst_dn.SetDirectory(0)
+        hf_systp = (hf_syst_up,hf_syst_dn)
+        hf_syst.append(hf_systp)
+        
     
     hf_qr_up  = ROOT.TH1F("hf_qr_up","",100,0,2000)
     hf_qr_dn  = ROOT.TH1F("hf_qr_dn","",100,0,2000)
@@ -204,7 +215,7 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
     hf_systup.SetDirectory(0)
     hf_nom.SetDirectory(0)
     
-    for keynum in trange(len(yeardict.keys())):
+    for keynum in range(0,len(yeardict.keys())):
         year = list(yeardict.keys())[keynum]
 
         #if year != targetyear: continue
@@ -215,7 +226,15 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
         hs_systup = ROOT.TH1F("hs_kew_systup","",100,0,2000)
         hs_nom    = ROOT.TH1F("hs_nom","",100,0,2000)
         
-        
+        hs_syst = []                        
+        for i,systname  in enumerate (shape_syst_list): 
+            hs_syst_up = ROOT.TH3F("hs_syst_up","", len(medges)-1, medges, len(d1edges)-1, d1edges, len(d2edges)-1, d2edges)
+            hs_syst_dn = ROOT.TH3F("hs_syst_dn","", len(medges)-1, medges, len(d1edges)-1, d1edges, len(d2edges)-1, d2edges)
+            hs_syst_up.SetDirectory(0)
+            hs_syst_dn.SetDirectory(0)
+            hs_systp = (hs_syst_up,hs_syst_dn)
+            hs_syst.append(hs_systp)
+            
         
         hs_qr_up  = ROOT.TH1F("hs_qr_up","",100,0,2000)
         hs_qr_dn  = ROOT.TH1F("hs_qr_dn","",100,0,2000)
@@ -229,14 +248,15 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
             ht_systdn = ROOT.TH1F("ht_kew_systdn","",100,0,2000)
             ht_systup = ROOT.TH1F("ht_kew_systup","",100,0,2000)
             ht_nom    = ROOT.TH1F("ht_nom","",100,0,2000)
-         
-            ht_syst = []
-                        
+          
+            ht_syst = []                        
             for i,systname  in enumerate (shape_syst_list): 
-                ht_syst_temp = ROOT.TH3F("htt","", len(medges)-1, medges, len(d1edges)-1, d1edges, len(d2edges)-1, d2edges)
-                ht_syst_temp.SetDirectory(0)
-                h_syst = copy.deepcopy(ht_syst_temp)
-                ht_syst.append(h_syst)
+                ht_syst_up = ROOT.TH3F("ht_syst_up","", len(medges)-1, medges, len(d1edges)-1, d1edges, len(d2edges)-1, d2edges)
+                ht_syst_dn = ROOT.TH3F("ht_syst_dn","", len(medges)-1, medges, len(d1edges)-1, d1edges, len(d2edges)-1, d2edges)
+                ht_syst_up.SetDirectory(0)
+                ht_syst_dn.SetDirectory(0)
+                ht_systp = (ht_syst_up,ht_syst_dn)
+                ht_syst.append(ht_systp)
                 
                 
 
@@ -255,8 +275,8 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
             count = 0
             
             
-            for tfile in trange(len(decay)):
-                #print(decay[tfile])
+            for tfile in range(len(decay)):
+                print(decay[tfile])
                 if "VBF" in decay[tfile]:
                     skey = decay[tfile].split("/")[-2].replace('_M125_GaSM', '')
                     sampleweight = refden[skey]
@@ -269,13 +289,14 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                         htt_ew_systup = ROOT.TH1F("htt_ew_systup","",100,0,2000)
                         htt_nom    = ROOT.TH1F("htt_nom","",100,0,2000)
                         htt_syst = []
-                        
                         for i,systname  in enumerate (shape_syst_list): 
-                            htt_syst_temp = ROOT.TH3F("htt_syst_temp","", len(medges)-1, medges, len(d1edges)-1, d1edges, len(d2edges)-1, d2edges)
-                            htt_syst_temp.SetDirectory(0)
-                            
-                            h_syst = copy.deepcopy(htt_syst_temp)
-                            htt_syst.append(h_syst)
+                            htt_syst_up = ROOT.TH3F("htt_syst_up","", len(medges)-1, medges, len(d1edges)-1, d1edges, len(d2edges)-1, d2edges)
+                            htt_syst_dn = ROOT.TH3F("htt_syst_dn","", len(medges)-1, medges, len(d1edges)-1, d1edges, len(d2edges)-1, d2edges)
+                            htt_syst_up.SetDirectory(0)
+                            htt_syst_dn.SetDirectory(0)
+                            htt_systp = (htt_syst_up,htt_syst_dn)
+                            htt_syst.append(htt_systp)
+
 
                         
                         htt_qr_up  = ROOT.TH1F("hs_qr_up","",100,0,2000)
@@ -284,7 +305,8 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                         #Load branches
 
 
-                        for event in t:  
+                        for event in t:
+                             
                             if ( ( (event.Z1Flav*event.Z2Flav)==(121*121) or (event.Z1Flav*event.Z2Flav)==(169*169) or (event.Z1Flav*event.Z2Flav)==(121*169) ) and (event.ZZMass >= 220) and (event.EventTag == targetcateg) ): 
 
                                 targetweight = targetreweight[targetprod][targetcomp] 
@@ -296,18 +318,15 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                                 htt.Fill(event.Dbsi,event.Dbkg,event.ZZMass,weight_nom)
                                 htt_nom.Fill(event.ZZMass,weight_nom)
                                 
-                                for isyst in htt_syst : 
+                                for isyst in range(len(htt_syst)) : 
                                     #need to change here the up and down systematics
-                                    wsystu  = weight_nom*1.05
-                                    wsystdn = weight_nom*0.95                                    
-                                    htt_syst[isyst].Fill(event.Dbsi,event.Dbkg,event.ZZMass,wsystu)
-                                    htt_syst[isyst].Fill(event.Dbsi,event.Dbkg,event.ZZMass,wsystdn)
+                                    wsystu,wsystdn  = getsyst("pdf",0,2018,event.ZZMass)
+                                    #print (wsystu,wsystdn)
+                                    #print (htt_syst[isyst])
+                                    htt_syst[isyst][0].Fill(event.Dbsi,event.Dbkg,event.ZZMass,wsystu)                     
+                                    htt_syst[isyst][1].Fill(event.Dbsi,event.Dbkg,event.ZZMass,wsystdn)
+               
                                     
-                                    
-
-
-                            
-
 
                         #t.Draw("Dbsi:Dbkg:ZZMass>>htt",weight,"")                        
                         #t.Draw("ZZMass>>htt_nom",weight,"")
@@ -317,7 +336,7 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                         #t.Draw("ZZMass>>htt_qr_dn",weightqrdn,"")    
                         #print ("htt_up:", htt_ew_systup.Integral())
                         #print ("htt_dn:", htt_ew_systdn.Integral())
-                        
+                        print("doneevents")
                         if count == 0:
                             #print("ADDED --- htt = ", htt.Integral())
                             ht.Add(htt)
@@ -325,6 +344,11 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                             ht_systdn.Add(htt_ew_systdn)
                             ht_systup.Add(htt_ew_systup)
                             
+                            for isyst in range(0,len(ht_syst)) : 
+                                ht_syst[isyst][0].Add(htt_syst[isyst][0])
+                                ht_syst[isyst][1].Add(htt_syst[isyst][1])
+                                
+
                             ht_qr_up.Add(htt_qr_up)
                             ht_qr_dn.Add(htt_qr_dn)
                             
@@ -341,6 +365,10 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                             ht_systdn.Add(htt_ew_systdn)
                             ht_systup.Add(htt_ew_systup)
                             
+                            for isyst in range(0,len(ht_syst)) : 
+                                ht_syst[isyst][0].Add(htt_syst[isyst][0])
+                                ht_syst[isyst][1].Add(htt_syst[isyst][1])
+                            
                                             
                             ht_qr_up.Add(htt_qr_up)
                             ht_qr_dn.Add(htt_qr_dn)    
@@ -351,10 +379,17 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
             ht_nom.Scale(1/count)
             ht_systdn.Scale(1/count)
             ht_systup.Scale(1/count)
-            
+            for isyst in range(0,len(ht_syst)) : 
+                ht_syst[isyst][0].Scale(1/count)
+                ht_syst[isyst][1].Scale(1/count)
+                            
                     
             #print("ht = ", ht.Integral())
             hs.Add(ht)
+            for isyst in range(0,len(hs_syst)) : 
+                hs_syst[isyst][0].Add(hs_syst[isyst][0])
+                hs_syst[isyst][1].Add(hs_syst[isyst][1])
+                            
             hs_systdn.Add(ht_systdn)
             hs_systup.Add(ht_systup)
             hs_nom.Add(ht_nom)
@@ -363,6 +398,15 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
             #print("hs = ", hs.Integral())
 
         hf.Add(hs)
+        
+        for isyst in range(0,len(hf_syst)) : 
+            hf_syst[isyst][0].Add(hf_syst[isyst][0])
+            hf_syst[isyst][1].Add(hf_syst[isyst][1])
+            hf_syst[isyst][0].Scale(1/len(yeardict.keys()))
+            hf_syst[isyst][1].Scale(1/len(yeardict.keys()))
+            hf_syst[isyst][0].SetName("h_"+shape_syst_list[isyst]+"_up")
+            hf_syst[isyst].second.SetName("h_"+shape_syst_list[isyst]+"_dn")
+
         hf_systdn.Add(hs_systdn)
         hf_systup.Add(hs_systup)
         hf_nom.Add(hs_nom)
@@ -379,7 +423,9 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
         h_list.append(hf_systdn)
         h_list.append(hf_systup)
         h_list.append(hf_nom)
-
+        for isyst in range(0,len(hf_syst)) : 
+            h_list.append(hf_syst[isyst][0])
+            h_list.append(hf_syst[isyst][1])
 
 
 
@@ -388,7 +434,7 @@ h_gg_unt =[]
 print (h_gg_unt)
 for tcomp in ltargetcomp: 
        FillHist("gg",tcomp,0,h_gg_unt,syst_list_ggh)
-
+'''
 h_gg_vbf =[]
 for tcomp in ltargetcomp: 
        FillHist("gg",tcomp,1,h_gg_vbf,syst_list_ggh)
@@ -414,6 +460,20 @@ for tcomp in ltargetcomp:
        FillHist("VBF",tcomp,2,h_ew_vh,syst_list_vbf)      
               
 #=========================================  
+
+'''
+
+
+fout = ROOT.TFile("output_gg_withsyst.root","recreate")
+fout.cd()
+
+print  ("here")
+for ihist in h_gg_unt: 
+
+    ihist.Write()
+
+fout.Close()
+
 
 '''
 h_bkg_unt =[]
