@@ -17,6 +17,12 @@ from array import *
 from GetSyst import getsyst
 #get_ipython().run_line_magic('jsroot', 'on')
 
+import sys
+
+production = sys.argv[1]
+category   = sys.argv[2]
+
+print (production, category)
 
 lumi = {'MC_2016_CorrectBTag':35.9, 'MC_2017':41.5, 'MC_2018':59.7}
 
@@ -84,6 +90,7 @@ print("d2edges", (d2edges))
 #treelistpath = "/eos/user/s/skyriaco/SWAN_projects/Offshel_tempmaker/output_highmass1618.txt"
 
 treelistpath = "/eos/user/s/skyriaco/SWAN_projects/Offshel_tempmaker/alloutput.txt"
+#treelistpath = "singleinput.txt"
 
 treelist = []
 
@@ -96,8 +103,8 @@ for line in llist:
 
 
 
-for t in treelist:
-    print(t)
+#for t in treelist:
+#    print(t)
 
 
 yeardict = {}
@@ -135,10 +142,8 @@ for numfile in range(0,len(treelist)):
 
 
 # ### Check organized trees
+#print (yeardict)
 
-
-
-print (yeardict)
 refsam4l = ["VBFToContinToZZTo4l", "VBFToHiggs0L1ContinToZZTo4l", "VBFToHiggs0L1f025ph0ToZZTo4l", "VBFToHiggs0L1f05ph0ContinToZZTo4l", "VBFToHiggs0L1f05ph0ToZZTo4l", "VBFToHiggs0L1f075ph0ToZZTo4l", "VBFToHiggs0L1ToZZTo4l", "VBFToHiggs0MContinToZZTo4l", "VBFToHiggs0Mf025ph0ToZZTo4l", "VBFToHiggs0Mf05ph0ContinToZZTo4l", "VBFToHiggs0Mf05ph0ToZZTo4l", "VBFToHiggs0Mf075ph0ToZZTo4l", "VBFToHiggs0MToZZTo4l", "VBFToHiggs0PHContinToZZTo4l", "VBFToHiggs0PHf025ph0ToZZTo4l", "VBFToHiggs0PHf05ph0ContinToZZTo4l", "VBFToHiggs0PHf05ph0ToZZTo4l", "VBFToHiggs0PHf075ph0ToZZTo4l", "VBFToHiggs0PHToZZTo4l", "VBFToHiggs0PMContinToZZTo4l", "VBFToHiggs0PMToZZTo4l"]
 refmel = ["p_Gen_JJEW_BKG_MCFM", "p_Gen_JJEW_BSI_ghv1_0_ghv1prime2_m1549p165_MCFM", "p_Gen_JJEW_SIG_ghv1_1_ghv1prime2_m1177p11_MCFM", "p_Gen_JJEW_BSI_ghv1_1_ghv1prime2_m1549p165_MCFM", "p_Gen_JJEW_SIG_ghv1_1_ghv1prime2_m1549p165_MCFM", "p_Gen_JJEW_SIG_ghv1_1_ghv1prime2_m2038p82_MCFM", "p_Gen_JJEW_SIG_ghv1_0_ghv1prime2_m1549p165_MCFM", "p_Gen_JJEW_BSI_ghv1_0_ghv4_0p216499_MCFM", "p_Gen_JJEW_SIG_ghv1_1_ghv4_0p164504_MCFM", "p_Gen_JJEW_BSI_ghv1_1_ghv4_0p216499_MCFM", "p_Gen_JJEW_SIG_ghv1_1_ghv4_0p216499_MCFM", "p_Gen_JJEW_SIG_ghv1_1_ghv4_0p284929_MCFM", "p_Gen_JJEW_SIG_ghv1_0_ghv4_0p216499_MCFM", "p_Gen_JJEW_BSI_ghv1_0_ghv2_0p207049_MCFM", "p_Gen_JJEW_SIG_ghv1_1_ghv2_0p157323_MCFM", "p_Gen_JJEW_BSI_ghv1_1_ghv2_0p207049_MCFM", "p_Gen_JJEW_SIG_ghv1_1_ghv2_0p207049_MCFM", "p_Gen_JJEW_SIG_ghv1_1_ghv2_0p272492_MCFM", "p_Gen_JJEW_SIG_ghv1_0_ghv2_0p207049_MCFM", "p_Gen_JJEW_BSI_ghv1_1_MCFM", "p_Gen_JJEW_SIG_ghv1_1_MCFM"]
 
@@ -172,6 +177,8 @@ ltargetyear = ["MC_2017","MC_2016_CorrectBTag","MC_2018"]
 ltargetprod = ["gg","VBF","ZZTo4l"]
 ltargetstate = ["4mu","4e","2e2mu"]
 ltargetcomp = [0,1,2]    # SIG=0 BSI=1 BKG=2    (for the qqbar bkg events in 'ZZTo4l' this choice does not matter as you can see above)
+if production == "ZZTo4l" : 
+    ltargetcomp = [0]
 ltargetcateg = [0,1,2]  # Untag=0 VBF=1 VH=2
 
 
@@ -179,8 +186,8 @@ ltargetcateg = [0,1,2]  # Untag=0 VBF=1 VH=2
 # ### Fill histogram
 def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
 
-    print (targetreweight[targetprod][targetcomp])
-    print (targetprod,targetcomp,targetcateg)
+#    print (targetreweight[targetprod][targetcomp])
+#    print (targetprod,targetcomp,targetcateg)
     weight = "{}*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
     weightewzzup = "{}*(1.0 + KFactor_EW_qqZZ_unc)*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
     weightewzzdn = "{}*(1.0 - KFactor_EW_qqZZ_unc)*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
@@ -276,7 +283,7 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
             
             
             for tfile in range(len(decay)):
-                print(decay[tfile])
+                #print(decay[tfile])
                 if "VBF" in decay[tfile]:
                     skey = decay[tfile].split("/")[-2].replace('_M125_GaSM', '')
                     sampleweight = refden[skey]
@@ -305,17 +312,24 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                         #Load branches
 
 
-                        for event in t:
-                             
+                        for iev,event in enumerate(t):
+                            #if iev > 10 : continue
                             if ( ( (event.Z1Flav*event.Z2Flav)==(121*121) or (event.Z1Flav*event.Z2Flav)==(169*169) or (event.Z1Flav*event.Z2Flav)==(121*169) ) and (event.ZZMass >= 220) and (event.EventTag == targetcateg) ): 
-
+                                
                                 targetweight = targetreweight[targetprod][targetcomp] 
                                 wght = 0
+                                
                                 targetw = targetweight.replace("*","*event.")
                                 weightt = "wght = event."+targetw
+                                if target == "1" : 
+                                    weightt = 1
+                                if production == "VBF" : 
+                                    weightt = "wght = event."+targetweight
+
                                 exec(weightt)                                                                
                                 weight_nom = wght*137.1*1000*event.xsec*event.overallEventWeight*event.L1prefiringWeight/event.Bin40   
-                                htt.Fill(event.Dbsi,event.Dbkg,event.ZZMass,weight_nom)
+                                #print (weight_nom)
+                                htt.Fill(event.ZZMass,event.Dbsi,event.Dbkg,weight_nom)
                                 htt_nom.Fill(event.ZZMass,weight_nom)
                                 
                                 for isyst in range(len(htt_syst)) : 
@@ -323,9 +337,10 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                                     wsystu,wsystdn  = getsyst("pdf",0,2018,event.ZZMass)
                                     #print (wsystu,wsystdn)
                                     #print (htt_syst[isyst])
-                                    htt_syst[isyst][0].Fill(event.Dbsi,event.Dbkg,event.ZZMass,wsystu)                     
-                                    htt_syst[isyst][1].Fill(event.Dbsi,event.Dbkg,event.ZZMass,wsystdn)
-               
+                                    htt_syst[isyst][0].Fill(event.ZZMass,event.Dbsi,event.Dbkg,wsystu*weight_nom)                     
+                                    htt_syst[isyst][1].Fill(event.ZZMass,event.Dbsi,event.Dbkg,wsystdn*weight_nom)
+                                    #print (weight_nom,wsystu,wsystdn)
+
                                     
 
                         #t.Draw("Dbsi:Dbkg:ZZMass>>htt",weight,"")                        
@@ -336,7 +351,7 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                         #t.Draw("ZZMass>>htt_qr_dn",weightqrdn,"")    
                         #print ("htt_up:", htt_ew_systup.Integral())
                         #print ("htt_dn:", htt_ew_systdn.Integral())
-                        print("doneevents")
+                        print("doneevents",htt.Integral())
                         if count == 0:
                             #print("ADDED --- htt = ", htt.Integral())
                             ht.Add(htt)
@@ -368,7 +383,7 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                             for isyst in range(0,len(ht_syst)) : 
                                 ht_syst[isyst][0].Add(htt_syst[isyst][0])
                                 ht_syst[isyst][1].Add(htt_syst[isyst][1])
-                            
+                                
                                             
                             ht_qr_up.Add(htt_qr_up)
                             ht_qr_dn.Add(htt_qr_dn)    
@@ -404,8 +419,8 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
             hf_syst[isyst][1].Add(hf_syst[isyst][1])
             hf_syst[isyst][0].Scale(1/len(yeardict.keys()))
             hf_syst[isyst][1].Scale(1/len(yeardict.keys()))
-            hf_syst[isyst][0].SetName("h_"+shape_syst_list[isyst]+"_up")
-            hf_syst[isyst].second.SetName("h_"+shape_syst_list[isyst]+"_dn")
+            hf_syst[isyst][0].SetName(production+"_"+str(targetcomp)+"_"+shape_syst_list[isyst]+"_up")
+            hf_syst[isyst][1].SetName(production+"_"+str(targetcomp)+"_"+shape_syst_list[isyst]+"_dn")
 
         hf_systdn.Add(hs_systdn)
         hf_systup.Add(hs_systup)
@@ -419,29 +434,32 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
         hf_systup.Scale(1/len(yeardict.keys()))
         hf_nom.Scale(1/len(yeardict.keys()))
         
+        hf.SetName(production+"_"+str(targetcomp))
         h_list.append(hf)
-        h_list.append(hf_systdn)
-        h_list.append(hf_systup)
-        h_list.append(hf_nom)
+        #h_list.append(hf_systdn)
+        #h_list.append(hf_systup)
+        #h_list.append(hf_nom)
         for isyst in range(0,len(hf_syst)) : 
             h_list.append(hf_syst[isyst][0])
             h_list.append(hf_syst[isyst][1])
 
+syst_list = []
+if production == "gg" : 
+    syst_list = ["qcd_ren","qcd_fact","pdf","a_strong"]
+h_list_withsyst =[]
+
+if category == "Untagged" : catt = 0 
+if category == "VBFtagged" : catt = 1 
+if category == "VHtagged" : catt = 2
 
 
-syst_list_ggh = ["qcd_ren","qcd_fact","pdf","a_strong"]
-h_gg_unt =[]
-print (h_gg_unt)
 for tcomp in ltargetcomp: 
-       FillHist("gg",tcomp,0,h_gg_unt,syst_list_ggh)
+       #FillHist(production,tcomp,catt,h_list_withsyst,syst_list_ggh)
+       FillHist(production,tcomp,catt,h_list_withsyst,syst_list)
+
+       
+
 '''
-h_gg_vbf =[]
-for tcomp in ltargetcomp: 
-       FillHist("gg",tcomp,1,h_gg_vbf,syst_list_ggh)
-
-h_gg_vh =[]
-for tcomp in ltargetcomp: 
-       FillHist("gg",tcomp,2,h_gg_vh,syst_list_ggh)      
         
 #=========================================  
 
@@ -464,11 +482,12 @@ for tcomp in ltargetcomp:
 '''
 
 
-fout = ROOT.TFile("output_gg_withsyst.root","recreate")
+foutname = "output_"+production+"_"+category+"_withsyst.root"
+fout = ROOT.TFile(foutname,"recreate")
 fout.cd()
 
 print  ("here")
-for ihist in h_gg_unt: 
+for ihist in h_list_withsyst: 
 
     ihist.Write()
 
@@ -487,7 +506,7 @@ FillHist("ZZTo4l",0,2,h_bkg_vh)
 
 # ### Add to 'hlist' if the output looks reasonable above
 
-
+'''
 
 c1 = ROOT.TCanvas("c1","c1",1800,600)
 c1.Divide(3,1)
@@ -542,7 +561,7 @@ c1.SaveAs("back_ew_qqzz.pdf")
 
 
 
-
+'''
 
 
 

@@ -1,0 +1,13 @@
+executable              = condorbatchscript_vbf.sh
+arguments               = $(i)
+
+output                  = Templog/Out_ew$(i).out
+error                   = Templog/Out_ew$(i).err
+log                     = Templog/Out_ew$(i).log
+
+request_memory          = 4000M
++JobFlavour             = "nextweek"
+
+periodic_remove         = JobStatus == 5
+WhenToTransferOutput    = ON_EXIT_OR_EVICT
+queue i in 1 2 3
