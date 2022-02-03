@@ -321,7 +321,7 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                                 
                                 targetw = targetweight.replace("*","*event.")
                                 weightt = "wght = event."+targetw
-                                if target == "1" : 
+                                if targetweight == "1" : 
                                     weightt = 1
                                 if production == "VBF" : 
                                     weightt = "wght = event."+targetweight
