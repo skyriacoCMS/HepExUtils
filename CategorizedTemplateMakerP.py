@@ -105,6 +105,7 @@ for numfile in range(0,len(treelist)):
         elif prod == "VBF":
             yeardict[year][prod][0].append(filename)
         elif prod == "ZZTo4l":
+            print ("appended", filename)
             yeardict[year][prod][0].append(filename)
         else:
             print("ERROR: Cannot recognize production mode of " + filename + "! Tree not sorted!")
@@ -123,9 +124,9 @@ refden = dict(zip(refsam4l, refmel))
 
 hlist = ['ggH SIG', 'ggH BSI', 'ggH BKG', 'qqbar BKG']
 
-targetreweight = {"gg": ["p_Gen_GG_SIG_kappaTopBot_1_ghz1_1_MCFM*KFactor_QCD_ggZZ_Nominal", "p_Gen_GG_BSI_kappaTopBot_1_ghz1_1_MCFM*KFactor_QCD_ggZZ_Nominal", "p_Gen_GG_BKG_MCFM*KFactor_QCD_ggZZ_Nominal"],
-                 "VBF": ["p_Gen_JJEW_SIG_ghv1_1_MCFM*0.5", "p_Gen_JJEW_BSI_ghv1_1_MCFM*0.5", "p_Gen_JJEW_BKG_MCFM*0.5"],
-                 "ZZTo4l": ["1"]}
+#targetreweight = {"gg": ["p_Gen_GG_SIG_kappaTopBot_1_ghz1_1_MCFM*KFactor_QCD_ggZZ_Nominal", "p_Gen_GG_BSI_kappaTopBot_1_ghz1_1_MCFM*KFactor_QCD_ggZZ_Nominal", "p_Gen_GG_BKG_MCFM*KFactor_QCD_ggZZ_Nominal"],
+#                 "VBF": ["p_Gen_JJEW_SIG_ghv1_1_MCFM*0.5", "p_Gen_JJEW_BSI_ghv1_1_MCFM*0.5", "p_Gen_JJEW_BKG_MCFM*0.5"],
+#                 "ZZTo4l": ["1"]}
 finalstate = {"4e": "121*121", "4mu": "169*169", "2e2mu": "121*169"}
 proc = ["ggH_0PM", "ggH_g11g21_negative", "ggH_g11g21_positive", "back_ggZZ", "back_qqZZ", "data_obs"]
 
@@ -149,12 +150,12 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
 
 #    print (targetreweight[targetprod][targetcomp])
 #    print (targetprod,targetcomp,targetcateg)
-    weight = "{}*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
-    weightewzzup = "{}*(1.0 + KFactor_EW_qqZZ_unc)*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
-    weightewzzdn = "{}*(1.0 - KFactor_EW_qqZZ_unc)*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
+#    weight = "{}*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
+#    weightewzzup = "{}*(1.0 + KFactor_EW_qqZZ_unc)*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
+#    weightewzzdn = "{}*(1.0 - KFactor_EW_qqZZ_unc)*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
     
-    weightqrup = "{}*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
-    weightqrdn = "{}*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
+#    weightqrup = "{}*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
+#    weightqrdn = "{}*((Z1Flav*Z2Flav)==(121*121) ||(Z1Flav*Z2Flav)==(169*169) ||(Z1Flav*Z2Flav)==(121*169)  )*137.1*(ZZMass>=220)*(EventTag=={})*1000*xsec*overallEventWeight*L1prefiringWeight/Bin40".format(targetreweight[targetprod][targetcomp], targetcateg)
 
     
     hf = ROOT.TH3F("hf","", len(medges)-1, medges, len(d1edges)-1, d1edges, len(d2edges)-1, d2edges)
@@ -185,7 +186,7 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
     
     for keynum in range(0,len(yeardict.keys())):
         year = list(yeardict.keys())[keynum]
-        #print (list(yeardict.keys())[keynum])
+        print (list(yeardict.keys())[keynum])
         #if year != targetyear: continue
         #print("\n", year, lumi[year])
 
@@ -245,9 +246,9 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
             ht_nom.SetDirectory(0)
             count = 0
             
-            
+            print ("about to fill")
             for itfile,tfile in enumerate(range(len(decay))):
-                #if itfile > 1 : continue
+                
                 #print(decay[tfile])
                 if "VBF" in decay[tfile]:
                     skey = decay[tfile].split("/")[-2].replace('_M125_GaSM', '')
@@ -281,21 +282,32 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                             #if iev > 1000 : continue
                             if not ( (event.Z1Flav*event.Z2Flav)==(121*121) or (event.Z1Flav*event.Z2Flav)==(169*169) or (event.Z1Flav*event.Z2Flav)==(121*169) ) : continue
                             if not (event.ZZMass >= 220) : continue
+                            
                             if (event.EventTag == targetcateg) : 
 
-                                targetweight = targetreweight[targetprod][targetcomp] 
-                                wght = 0
                                 
-                                targetw = targetweight.replace("*","*event.")
-                                weightt = "wght = event."+targetw
-                                if targetweight == "1" : 
-                                    weightt = "wght =1"
-                                if production == "VBF" : 
-                                    weightt = "wght = event."+targetweight
+                                wght = 0
+                                #targetreweight = {"gg": ["p_Gen_GG_SIG_kappaTopBot_1_ghz1_1_MCFM*KFactor_QCD_ggZZ_Nominal", "p_Gen_GG_BSI_kappaTopBot_1_ghz1_1_MCFM*KFactor_QCD_ggZZ_Nominal", "p_Gen_GG_BKG_MCFM*KFactor_QCD_ggZZ_Nominal"],
+                 #"VBF": ["p_Gen_JJEW_SIG_ghv1_1_MCFM*0.5", "p_Gen_JJEW_BSI_ghv1_1_MCFM*0.5", "p_Gen_JJEW_BKG_MCFM*0.5"],
+                  #                                "ZZTo4l": ["1"]}
 
-                                exec(weightt)                                                                
+                                
+
+                                if production == "gg" : 
+                                    if targetcomp == 0 : wght = event.p_Gen_GG_SIG_kappaTopBot_1_ghz1_1_MCFM*event.KFactor_QCD_ggZZ_Nominal
+                                    if targetcomp == 1 : wght = event.p_Gen_GG_BSI_kappaTopBot_1_ghz1_1_MCFM*event.KFactor_QCD_ggZZ_Nominal
+                                    if targetcomp == 2 : wght = event.p_Gen_GG_BKG_MCFM*event.KFactor_QCD_ggZZ_Nominal
+                                    
+                                if production == "ZZTo4l" :
+                                    wght =1
+                                if production == "VBF" : 
+                                    if targetcomp == 0 : wght = event.p_Gen_JJEW_SIG_ghv1_1_MCFM*0.5
+                                    if targetcomp == 1 : wght = event.p_Gen_JJEW_BSI_ghv1_1_MCFM*0.5
+                                    if targetcomp == 2 : wght = event.p_Gen_JJEW_BKG_MCFM*0.5
+                                    
+
                                 weight_nom = wght*137.1*1000*event.xsec*event.overallEventWeight*event.L1prefiringWeight/event.Bin40   
-                                #print (weight_nom)
+                                
                                 htt.Fill(event.ZZMass,event.Dbsi,event.Dbkg,weight_nom)
                                 htt_nom.Fill(event.ZZMass,weight_nom)
                                 
@@ -416,12 +428,12 @@ syst_list = []
 if production == "gg" : 
     syst_list = ["qcd_ren","qcd_fact","pdf","a_strong"]
 h_list_withsyst =[]
-
+catt = -1
 if category == "Untagged" : catt = 0 
 if category == "VBFtagged" : catt = 1 
 if category == "VHtagged" : catt = 2
 
-
+assert not (catt == -1), "Invalid Category" 
 
 
 for tcomp in ltargetcomp: 
