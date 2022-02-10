@@ -58,7 +58,9 @@ for key in fin.GetListOfKeys():
         hns = hns.replace("VBF","offqqH")
         hns = hns.replace("ZZTo4l_0","back_qqZZ")
         hns = hns.replace("_0","_0PM")
-        hns = hns.replace("_1","_g12g22")
+        if "ggH" in hns : hns = hns.replace("_1","_g11g21")
+        if "qqH" in hns : hns = hns.replace("_1","_g12g22")
+        
         hns = hns.replace("qcd_","qcd")        
         if "offqqH_2" in hns :
             hns = hns.replace("offqqH_2","back_VVZZ")
