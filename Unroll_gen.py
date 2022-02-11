@@ -22,6 +22,16 @@ def  Unroll(hist):
                 binz_c = hist.GetZaxis().GetBinCenter(z)
                 ibin =  hist.FindBin(binx_c,biny_c,binz_c)
                 cont  = hist.GetBinContent(ibin)
+
+                #put small values in empty background bins
+                if cont == 0 : 
+                    if "back" in hist.GetName():
+                        intt = hist.Integral()
+                        nb = ybins*xbins*zbins
+                        contt = 0.1*intt*1.0/nb
+                        print ("found empty bin",contt)
+                        hist.SetBinContent(ibin,contt)
+                        print (cont)
                 if cont  < 0 :
                     has_negative = True
 

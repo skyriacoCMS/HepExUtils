@@ -67,8 +67,6 @@ for key in fin.GetListOfKeys():
         if "offggH_2" in hns :
             hns = hns.replace("offggH_2","back_ggZZ")
         
-
-
         thist.SetName(hns)    
         r_ate = thist.Integral()
         tp,tn = Unroll(thist)
@@ -88,7 +86,8 @@ for key in fin.GetListOfKeys():
             tp.SetName(tp.GetName())
             tn.SetName(tn.GetName())
             
-            
+            #for ibinn in tp.GetXaxis().GetNbins():
+            #    print (tp.GetBinContent(ibinn))
             r_ate = tp.Integral()
 
             #print tp.GetName(),r_ate
@@ -114,8 +113,14 @@ for i,hist in enumerate(hists):
     if i > 1 : 
       data_obs.Add(hist)
 for his in hists:
+    
+    hns = his.GetName()
+    hns = hns.replace("_up","Up")    
+    hns = hns.replace("_dn","Down")    
+    his.SetName(hns)
+    print fout.GetName(),"writing ",his.GetName()," ",his.Integral()
     his.Write()
-    print "writing ",his.GetName()," ",his.Integral()
+     
 data_obs.Write()
 
 fout.Close()

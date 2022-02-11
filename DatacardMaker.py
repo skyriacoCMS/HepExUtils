@@ -3,6 +3,8 @@ import sys
 import ROOT
 from Unroll_gen   import Unroll 
 import copy
+from Addsyst_functions import *
+
 nm = sys.argv[1]
 
 
@@ -25,27 +27,27 @@ for key in fin.GetListOfKeys():
     if "TH1F" in key.GetClassName():
         h_name = key.GetName()
         
-        if "up" not in h_name and "dn" not in h_name and "data" not in h_name:
+        if "Up" not in h_name and "Down" not in h_name and "data" not in h_name:
             hist = fin.Get(h_name)
             hrate = hist.Integral()
             processes.append(h_name)
             rate.append(hrate)
             h_temp = fin.Get(h_name)
-            #print (h_name , hrate)
+            print (h_name , hrate)
         elif "data" not in h_name:
             hnml = h_name.split("_")
             syst_name = hnml[2]
             for iel,el  in enumerate(hnml):
                 if iel> 2: 
                     syst_name = syst_name +"_"+el 
-            syst_name = syst_name.replace("_dn","")        
-            syst_name = syst_name.replace("_up","")        
+            syst_name = syst_name.replace("Down","")        
+            syst_name = syst_name.replace("Up","")        
             syst_name = syst_name.replace("positive_","")        
             syst_name = syst_name.replace("negative_","")        
             #print (syst_name)
             if syst_name not in applyshapesyst : applyshapesyst.append(syst_name)
-            psyst = h_name.replace("_dn","")
-            psyst = psyst.replace("_up","")
+            psyst = h_name.replace("Down","")
+            psyst = psyst.replace("Up","")
             if psyst not in procsyst : procsyst.append(psyst)
             #print (h_name)
         else :
@@ -104,6 +106,12 @@ for isyst,syst in enumerate(applyshapesyst):
       else :     
           lineSHsyst[isyst] = lineSHsyst[isyst] + " -"
 
+scale_syst = []
+addlumi(scale_syst,processes)
+addEWcorr_qqZZ(scale_syst,processes)
+
+
+          
 ibkg = 0 
 for i,procc in enumerate(processes):
     line =line +" "+chanel
@@ -132,6 +140,9 @@ f.write(line_p)
 f.write(line_indx)
 f.write(line_rate)
 f.write("------------\n")
+for scalesyst in scale_syst :
+    payload = scalesyst+"\n"
+    f.write(payload)
 for shapsyst in lineSHsyst :
     payload = shapsyst+"\n"
     f.write(payload)
