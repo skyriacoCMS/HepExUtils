@@ -311,7 +311,7 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                                 htt.Fill(event.ZZMass,event.Dbsi,event.Dbkg,weight_nom)
                                 htt_nom.Fill(event.ZZMass,weight_nom)
                                 
-                                for isyst in range(len(htt_syst)) : 
+                                for isyst,systt in enumerate(htt_syst) : 
                                     #need to change here the up and down systematics
                                     wsystu,wsystdn  = getsyst("pdf",0,2018,event.ZZMass)
                                     #print (wsystu,wsystdn)
@@ -934,6 +934,11 @@ print()
 
 c1.Draw()
 fo.Close()
+
+
+#
+#
+
 
 
 # In[ ]:
