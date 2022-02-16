@@ -253,7 +253,7 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                 if "VBF" in decay[tfile]:
                     skey = decay[tfile].split("/")[-2].replace('_M125_GaSM', '')
                     sampleweight = refden[skey]
-
+                    #print (sampleweight)
                 if ( os.stat(decay[tfile]).st_size > 100 ):  
                         f = ROOT.TFile(decay[tfile])
                         t = f.Get("eventTree")
@@ -304,13 +304,20 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
                                     if targetcomp == 0 : wght = event.p_Gen_JJEW_SIG_ghv1_1_MCFM*0.5
                                     if targetcomp == 1 : wght = event.p_Gen_JJEW_BSI_ghv1_1_MCFM*0.5
                                     if targetcomp == 2 : wght = event.p_Gen_JJEW_BKG_MCFM*0.5
-                                    
-
+                                    samplew = 1.
+                                    ccmnd = "samplew = event."+sampleweight
+                                    print (sampleweight)
+                                    exec (ccmnd)
+                                    print ("exec??>>",samplew)
+                                    wght = wght/samplew 
+                            
                                 weight_nom = wght*137.1*1000*event.xsec*event.overallEventWeight*event.L1prefiringWeight/event.Bin40   
                                 
                                 htt.Fill(event.ZZMass,event.Dbsi,event.Dbkg,weight_nom)
                                 htt_nom.Fill(event.ZZMass,weight_nom)
                                 
+
+
                                 for isyst,systt in enumerate(htt_syst) : 
                                     #need to change here the up and down systematics
                                     wsystu,wsystdn  = getsyst("pdf",0,2018,event.ZZMass)
@@ -322,7 +329,7 @@ def FillHist(targetprod,targetcomp,targetcateg,h_list,shape_syst_list) :
 
                                     
 
-                        #t.Draw("Dbsi:Dbkg:ZZMass>>htt",weight,"")                        
+                       #t.Draw("Dbsi:Dbkg:ZZMass>>htt",weight,"")                        
                         #t.Draw("ZZMass>>htt_nom",weight,"")
                         #t.Draw("ZZMass>>htt_ew_systup",weightewzzup,"")
                         #t.Draw("ZZMass>>htt_ew_systdn",weightewzzdn,"")
@@ -440,7 +447,7 @@ for tcomp in ltargetcomp:
        print ("Running ",production," ",catt,"  comp:",tcomp)    #FillHist(production,tcomp,catt,h_list_withsyst,syst_list_ggh)
        FillHist(production,tcomp,catt,h_list_withsyst,syst_list)
 
-       
+
 
 '''
         
