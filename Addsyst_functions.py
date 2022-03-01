@@ -1,8 +1,10 @@
 def addlumi(lines,processes):
     line = "lumi_13TeV lnN"
     for pr in processes :
-        line =  line + " 1.025/0.975" 
-    #line = line + " \n"    
+        line =  line + " 1.016/0.984" 
+    #line = line + " \n"
+    #taken from https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#SummaryTable
+    
     lines.append(line)    
 
 def addQCDscale_muR_ggH(lines,processes):
